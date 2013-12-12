@@ -8,6 +8,20 @@
  */
 
 /**
+ * Plugin Name: WooCommerce MOLPay
+ * Plugin URI: http://www.molpay.com/
+ * Description: WooCommerce MOLPay is a MOLPay payment gateway for WooCommerce v2
+ * Author: MOLPay Tech Team
+ * Author URI: http:/www.molpay.com/
+ * Version: 2.0.0
+ * License: MIT
+ * Text Domain: wcmolpay
+ * Domain Path: /languages/
+ * For callback : http://shoppingcarturl/?wc-api=WC_Molpay_Gateway
+ * Invalid Transaction maybe is because vkey not found / skey wrong generated
+ */
+
+/**
  * If WooCommerce plugin is not available
  * 
  */
