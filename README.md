@@ -29,7 +29,7 @@ Installations
 
 4. Once the plugin finish installing, Actived it.
 
-5. Now, navigate to WooCommerce > Settings > Payment Gateways.
+5. Now, navigate to WooCommerce > Settings > Payment Gateways/Checkout.
 
 6. Click on the Payment Gateways | `MOLPay`, Then fill in the Merchant ID and Verification Key setting.
 

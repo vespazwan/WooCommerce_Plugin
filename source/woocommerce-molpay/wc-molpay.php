@@ -105,9 +105,6 @@ function wcmolpay_gateway_load() {
             // Payment listener/API hook
             add_action( 'woocommerce_api_wc_molpay_gateway', array( $this, 'check_ipn_response' ) );
 
-            // Configuration validation
-            $this->enabled = ( 'yes' == $this->settings['enabled'] ) && !empty( $this->merchant_id ) && !empty( $this->verify_key ) && $this->is_valid_for_use();
-
             // Checking if merchant_id is not empty.
             $this->merchant_id == '' ? add_action( 'admin_notices', array( &$this, 'merchant_id_missing_message' ) ) : '';
 
