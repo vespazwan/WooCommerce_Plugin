@@ -3,17 +3,17 @@
  * MOLPay WooCommerce Shopping Cart Plugin
  * 
  * @author MOLPay Technical Team <technical@molpay.com>
- * @version 2.0.0
+ * @version 2.1.0
  * @example For callback : http://shoppingcarturl/?wc-api=WC_Molpay_Gateway
  */
 
 /**
  * Plugin Name: WooCommerce MOLPay
  * Plugin URI: http://www.molpay.com/
- * Description: WooCommerce MOLPay is a MOLPay payment gateway for WooCommerce v2
+ * Description: WooCommerce MOLPay is a MOLPay payment gateway for WooCommerce v2.1
  * Author: MOLPay Tech Team
  * Author URI: http:/www.molpay.com/
- * Version: 2.0.0
+ * Version: 2.1.0
  * License: MIT
  * Text Domain: wcmolpay
  * Domain Path: /languages/
@@ -313,7 +313,7 @@ function wcmolpay_gateway_load() {
             if ($status == '00') {
                 $order->add_order_note('MOLPay Payment Status: SUCCESSFUL'.'<br>Transaction ID: ' . $tranID . $referer);								
                 $order->payment_complete();
-                wp_redirect(add_query_arg('key', $order->order_key, add_query_arg('order', $orderid, get_permalink(get_option('woocommerce_thanks_page_id')))));
+                wp_redirect($order->get_checkout_order_received_url());
                 exit;
             } 
             else if ($status == "11") { 

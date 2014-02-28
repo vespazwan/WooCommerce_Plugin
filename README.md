@@ -7,7 +7,7 @@ MOLPay Plugin for Wordpress WooCommerce Shopping Cart develop by MOLPay technica
 Supported version
 -----------------
 
-WooCommerce version 2.x.x and WP 3.7.x
+WooCommerce version 2.x.x and WP 3.8.x
 
 
 Notes
