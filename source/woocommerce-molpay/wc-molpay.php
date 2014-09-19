@@ -3,7 +3,7 @@
  * MOLPay WooCommerce Shopping Cart Plugin
  * 
  * @author MOLPay Technical Team <technical@molpay.com>
- * @version 2.1.0
+ * @version 2.2.0
  * @example For callback : http://shoppingcarturl/?wc-api=WC_Molpay_Gateway
  */
 
@@ -13,7 +13,7 @@
  * Description: WooCommerce MOLPay is a MOLPay payment gateway for WooCommerce v2.1
  * Author: MOLPay Tech Team
  * Author URI: http:/www.molpay.com/
- * Version: 2.1.0
+ * Version: 2.1.1
  * License: MIT
  * Text Domain: wcmolpay
  * Domain Path: /languages/
@@ -98,10 +98,10 @@ function wcmolpay_gateway_load() {
             add_action( 'valid_molpay_request_returnurl', array( &$this, 'check_molpay_response_returnurl' ) );
             add_action( 'valid_molpay_request_callback', array( &$this, 'check_molpay_response_callback' ) );
             add_action( 'woocommerce_receipt_molpay', array( &$this, 'receipt_page' ) );
-			
+            
             //save setting configuration
             add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-						
+                        
             // Payment listener/API hook
             add_action( 'woocommerce_api_wc_molpay_gateway', array( $this, 'check_ipn_response' ) );
 
@@ -186,20 +186,20 @@ function wcmolpay_gateway_load() {
          * @return string
          */
         public function generate_form( $order_id ) {
-            $order = new WC_Order( $order_id );	
+            $order = new WC_Order( $order_id ); 
             $pay_url = $this->pay_url.$this->merchant_id;
             $total = $order->order_total;
-            $vcode = md5($order->order_total.$this->merchant_id.$order->id.$this->verify_key);	
-			
+            $vcode = md5($order->order_total.$this->merchant_id.$order->id.$this->verify_key);  
+            
             if ( sizeof( $order->get_items() ) > 0 ) 
                 foreach ( $order->get_items() as $item )
                     if ( $item['qty'] )
                         $item_names[] = $item['name'] . ' x ' . $item['qty'];
 
             $desc = sprintf( __( 'Order %s' , 'woocommerce'), $order->get_order_number() ) . " - " . implode( ', ', $item_names );
-						
+                        
             $molpay_args = array(
-                'vcode'	=> $vcode,
+                'vcode' => $vcode,
                 'orderid' => $order->id,
                 'amount' => $total,
                 'bill_name' => $order->billing_first_name." ".$order->billing_last_name,
@@ -216,7 +216,7 @@ function wcmolpay_gateway_load() {
             foreach ($molpay_args as $key => $value) {
                 $molpay_args_array[] = "<input type='hidden' name='".$key."' value='". $value ."' />";
             }
-			
+            
             return "<form action='".$pay_url."/' method='post' id='molpay_payment_form' name='molpay_payment_form'>"
                     . implode('', $molpay_args_array)
                     . "<input type='submit' class='button-alt' id='submit_molpay_payment_form' value='" . __('Pay via MOLPay', 'woothemes') . "' /> "
@@ -278,7 +278,7 @@ function wcmolpay_gateway_load() {
                 wp_die( "MOLPay Request Failure" );
             }
         }
-		
+        
         /**
          * This part is returnurl function for MOLPay
          * 
@@ -304,30 +304,47 @@ function wcmolpay_gateway_load() {
             $key0 = md5($tranID.$orderid.$status.$domain.$amount.$currency);
             $key1 = md5($paydate.$domain.$key0.$appcode.$vkey);
 
-            // invalid transaction
-            if( $skey != $key1 )
-                $status = -1;
+
 
             $referer = "<br>Referer: ReturnURL";
 
-            if ($status == '00') {
-                $order->add_order_note('MOLPay Payment Status: SUCCESSFUL'.'<br>Transaction ID: ' . $tranID . $referer);								
-                $order->payment_complete();
-                wp_redirect($order->get_checkout_order_received_url());
+             if ($status == "00") {
+                    // invalid transaction
+                    if( $skey != $key1 )
+                    {
+                    $order->add_order_note('MOLPay Payment Status: FAILED'.'<br>Transaction ID: ' . $tranID . $referer);
+                            $order->update_status('failed', sprintf(__('Payment %s via MOLPay.', 'woocommerce'), $tranID ) );
+                            wp_redirect($order->get_cancel_order_url());
+                    }
+                    else
+                    {
+                            $order->add_order_note('MOLPay Payment Status: SUCCESSFUL'.'<br>Transaction ID: ' . $tranID . $referer);                                
+                            $order->payment_complete();
+                            wp_redirect($order->get_checkout_order_received_url());
+                    }        
                 exit;
             } 
-            else if ($status == "11") { 
+            else if ($status == "22") { 
+                $order->add_order_note('MOLPay Payment Status: Invalid Transaction'.'<br>Transaction ID: ' . $tranID . $referer);
+                $order->update_status('pending', sprintf(__('Payment %s via MOLPay.', 'woocommerce'), $tranID ) );
+                $order->payment_complete($tranID);
+                wp_redirect($order->get_view_order_url());
+                exit;
+            }
+            else if ($status == "11") {  //status 11 which is failed
+                $order->add_order_note('MOLPay Payment Status: FAILED'.'<br>Transaction ID: ' . $tranID . $referer);
+                $order->update_status('failed', sprintf(__('Payment %s via MOLPay.', 'woocommerce'), $tranID ) );
+                //$order->payment_complete();
+                wp_redirect($order->get_view_order_url());
+                //wp_redirect($order->get_cancel_order_url());
+                exit;
+            }
+            else   {  //invalid transaction
                 $order->add_order_note('MOLPay Payment Status: FAILED'.'<br>Transaction ID: ' . $tranID . $referer);
                 $order->update_status('failed', sprintf(__('Payment %s via MOLPay.', 'woocommerce'), $tranID ) );
                 wp_redirect($order->get_cancel_order_url());
                 exit;
-            } 
-            else  {
-                $order->add_order_note('MOLPay Payment Status: Invalid Transaction'.'<br>Transaction ID: ' . $tranID . $referer);
-                $order->update_status('on-hold', sprintf(__('Payment %s via MOLPay.', 'woocommerce'), $tranID ) );
-                wp_redirect($order->get_cancel_order_url());
-                exit;
-            }	
+            }
         }
 
         /**
@@ -337,39 +354,45 @@ function wcmolpay_gateway_load() {
          */
         function check_molpay_response_callback() {
             global $woocommerce;
-						
+                        
             $nbcb = $_POST['nbcb'];
-            $amount = $_POST['amount']; 			
+            $amount = $_POST['amount'];             
             $orderid = $_POST['orderid'];
             $tranID = $_POST['tranID'];
             $status = $_POST['status'];
-            $domain = $_POST['domain'];	
+            $domain = $_POST['domain']; 
             $currency = $_POST['currency'];
             $appcode = $_POST['appcode'];
             $paydate = $_POST['paydate'];
             $skey = $_POST['skey'];
             $vkey = $this->verify_key;
-			
+            
             $key0 = md5($tranID.$orderid.$status.$domain.$amount.$currency);
             $key1 = md5($paydate.$domain.$key0.$appcode.$vkey);
 
-            if ($skey != $key1)
-                $status = "-1";
-			
+
             $order = new WC_Order( $orderid );
-            $referer = "<br>Referer: CallbackURL";	
-			
-            if ($status == "00") {				
-                $order->add_order_note('MOLPay Payment Status: SUCCESSFUL'.'<br>Transaction ID: ' . $tranID . $referer);								
-                $order->payment_complete();
+            $referer = "<br>Referer: CallbackURL";  
+            
+           if ($status == "00") {
+                if( $skey != $key1 )
+                {
+                    $order->add_order_note('MOLPay Payment Status: FAILED'.'<br>Transaction ID: ' . $tranID . $referer);
+                    $order->update_status('failed', sprintf(__('Payment %s via MOLPay.', 'woocommerce'), $tranID ) );
+                }
+                else
+                {               
+                    $order->add_order_note('MOLPay Payment Status: SUCCESSFUL'.'<br>Transaction ID: ' . $tranID . $referer);                                
+                    $order->payment_complete();
+                }
             } 
-            else if ($status == "11") { 
-                $order->add_order_note('MOLPay Payment Status: FAILED'.'<br>Transaction ID: ' . $tranID . $referer);
-                $order->update_status('failed', sprintf(__('Payment %s via MOLPay.', 'woocommerce'), $tranID ) );
-            } 
-            else {
+            else if ($status == "22") { 
                 $order->add_order_note('MOLPay Payment Status: Invalid Transaction'.'<br>Transaction ID: ' . $tranID . $referer);
                 $order->update_status('on-hold', sprintf(__('Payment %s via MOLPay.', 'woocommerce'), $tranID ) );
+            }
+            else { //status 11 which is failed
+                $order->add_order_note('MOLPay Payment Status: FAILED'.'<br>Transaction ID: ' . $tranID . $referer);
+                $order->update_status('failed', sprintf(__('Payment %s via MOLPay.', 'woocommerce'), $tranID ) );
             }
         }
 
