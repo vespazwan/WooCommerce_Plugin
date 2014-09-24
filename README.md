@@ -1,7 +1,7 @@
 MOLPay Wordpress WooCommerce Plugin
 =====================
 
-MOLPay Plugin for Wordpress WooCommerce Shopping Cart develop by MOLPay technical team.
+MOLPay Plugin for Wordpress WooCommerce Shopping Cart developed by MOLPay technical team.
 
 
 Supported version
