@@ -314,7 +314,9 @@ function wcmolpay_gateway_load() {
                     {
                     $order->add_order_note('MOLPay Payment Status: FAILED'.'<br>Transaction ID: ' . $tranID . $referer);
                             $order->update_status('failed', sprintf(__('Payment %s via MOLPay.', 'woocommerce'), $tranID ) );
-                            wp_redirect($order->get_cancel_order_url());
+                            $woocommerce->cart->empty_cart();
+                            wp_redirect($order->get_view_order_url());
+                            //wp_redirect($order->get_cancel_order_url());
                     }
                     else
                     {
@@ -335,6 +337,7 @@ function wcmolpay_gateway_load() {
                 $order->add_order_note('MOLPay Payment Status: FAILED'.'<br>Transaction ID: ' . $tranID . $referer);
                 $order->update_status('failed', sprintf(__('Payment %s via MOLPay.', 'woocommerce'), $tranID ) );
                 //$order->payment_complete();
+                $woocommerce->cart->empty_cart();
                 wp_redirect($order->get_view_order_url());
                 //wp_redirect($order->get_cancel_order_url());
                 exit;
@@ -342,7 +345,9 @@ function wcmolpay_gateway_load() {
             else   {  //invalid transaction
                 $order->add_order_note('MOLPay Payment Status: FAILED'.'<br>Transaction ID: ' . $tranID . $referer);
                 $order->update_status('failed', sprintf(__('Payment %s via MOLPay.', 'woocommerce'), $tranID ) );
-                wp_redirect($order->get_cancel_order_url());
+                $woocommerce->cart->empty_cart();
+                wp_redirect($order->get_view_order_url());
+                //wp_redirect($order->get_cancel_order_url());
                 exit;
             }
         }
