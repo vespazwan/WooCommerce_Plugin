@@ -23,9 +23,11 @@ Installations
 
 1. Download or clone this repository.
 
+2. Extract the downloaded repository.
+
 2. Now, login to your Wordpress WooCommerce backend dashboard, Navigate to Plugins menu.
 
-3. Click on the Add New plugin. Then, install the plugin using the woocommerce-molpay.zip file in the distribution folder.
+3. Click on the Add New plugin. Then, install the plugin using the woocommerce-molpay.zip file under distribution folder from the downloaded repository.
 
 4. Once the plugin finish installing, Actived it.
 
