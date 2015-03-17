@@ -1,3 +1,5 @@
+![Screenshot for WooCommerce Seamless Plugin](https://cloud.githubusercontent.com/assets/6263224/6680657/489316a2-cc95-11e4-8bf2-356b3c1f4526.jpg)
+
 MOLPay Wordpress WooCommerce Plugin
 =====================
 
@@ -6,11 +8,13 @@ MOLPay Plugin for Wordpress WooCommerce Shopping Cart developed by MOLPay techni
 
 Supported version
 -----------------
-New Update 10/3/2015
+New Update 17/3/2015
 
-- WooCommerce version 2.3.x WP 4.1.x and above
+- WooCommerce Seamless Plugin
 
 Last Update:
+
+- WooCommerce version 2.3.x WP 4.1.x and above
 
 - WooCommerce version 2.2.x WP 4.0.x and above
 
