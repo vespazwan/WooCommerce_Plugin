@@ -50,6 +50,8 @@ Installations
 8. Click on the MERCHANT PROFILE menu. Fill in Callback URL with your shopping cart URL.
 
   ``Return URL : http://shoppingcarturl/?wc-api=WC_Molpay_Gateway``
+  
+  ``Notification URL : http://shoppingcarturl/?wc-api=WC_Molpay_Gateway`` 
 
   ``Callback URL : http://shoppingcarturl/?wc-api=WC_Molpay_Gateway`` 
   
